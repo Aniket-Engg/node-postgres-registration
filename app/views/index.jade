@@ -4,3 +4,10 @@ html
     title= title
   body
     p= message
+    if (!user)
+      a(href='/login') login
+      br
+      a(href='/register') register
+    if (user)
+      p You are currently logged in as #{user.email}
+      a(href='/logout') logout

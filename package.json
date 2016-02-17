@@ -1,16 +1,16 @@
 {
-  "name": "login-test-simple",
+  "name": "nodejs-login-registration",
   "version": "1.0.0",
   "scripts": {
     "start": "node ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "dependencies": {
     "bcrypt": "^0.8.5",
-    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.2",
+    "colors": "^1.1.2",
     "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",

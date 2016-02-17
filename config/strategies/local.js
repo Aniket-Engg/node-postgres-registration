@@ -15,7 +15,7 @@ module.exports = function() {
 				if (!user) {
 					return next(null, false, {message: 'No such user found'});
 				}
-        user.verifyPassword(password, function(err, isValid) {
+        user.authenticate(password, function(err, isValid) {
           if (err) {
             return next(err);
           }

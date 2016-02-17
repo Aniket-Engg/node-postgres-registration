@@ -1,5 +1,6 @@
 var config = require('./config');
 var mongoose = require('mongoose');
+var colors = require('colors');
 
 var setupMongo = function () {
 	// Prepare models
@@ -13,13 +14,22 @@ var setupMongo = function () {
 	
 	
 	// Handle events
-	db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+	db.on('error', function(err) {
+    if (err) {
+      var retryTime = 5000;
+      console.error(colors.red.bold(err));
+      console.log(colors.yellow('Attempting to reconnect to MongoDB in %s seconds...'), retryTime/1000);
+      setTimeout(function() {
+        mongoose.connect(config.dbAddress);
+      }, retryTime);
+    }
+  });
 	
 	db.once('open', function() {
-		console.log('MongoDB successfuly connected!');
+		console.log(colors.green('MongoDB successfuly connected.'));
 	});
-	
-	return db;
+  
+  return db;
 }
 
 var loadModels = function() {

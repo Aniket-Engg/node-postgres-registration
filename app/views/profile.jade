@@ -1,6 +1,8 @@
 doctype
 html
   body
+    p Profile
     p= welcomeMessage
-    p= email
-    p= password
+    if (user)
+      p You are currently logged in as #{user.email}
+      a(href='/logout') logout
