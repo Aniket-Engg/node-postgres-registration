@@ -1,0 +1,8 @@
+doctype
+html
+	body
+		ul
+			for user in registeredUsers
+				li= (user.name ? user.name : '') + ' ' + user.email
+			else
+				li No users registered.

@@ -1,0 +1,15 @@
+doctype
+html
+  body
+    if message
+      p= message
+    div
+      form(action='/login',method='post')
+        div
+          label(for='email') email
+          input(id='email',type='text',value='',placeholder='@',name='email')
+        div
+          label(for='password') password
+          input(id='password',type='password',value='',placeholder='',name='password')
+        div
+          input(type='submit',value='Login')
