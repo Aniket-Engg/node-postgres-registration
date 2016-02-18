@@ -1,5 +1,5 @@
 # nodejs-login-registration
-A simple login/registration system using Node.js
+Simple login/registration using Node, Express, Angular and MongoDB.
 
 ## Roadmap
 ### User Stories
@@ -15,3 +15,5 @@ A simple login/registration system using Node.js
 ### Development
 - [ ] Automate the project setup and init, as well as finding and getting dependencies before launching.
 - [ ] Add unit tests around the user stories.
+- [ ] Integrate the Front-end via Angular.
+- [ ] Setup a client independant API that returns the data in some standard JSON.
