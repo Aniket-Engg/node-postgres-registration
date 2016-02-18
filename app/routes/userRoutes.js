@@ -35,6 +35,12 @@ router.get('/profile', isLoggedIn, function (req, res, next) {
     });
 });
 
+router.get('/edit-profile', isLoggedIn, function(req, res) {
+	res.render('edit-profile', {message: 'edit profile'});
+});
+
+router.post('/edit-profile', isLoggedIn, usersController.changePassword);
+
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();

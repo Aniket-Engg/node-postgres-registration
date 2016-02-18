@@ -1,0 +1,15 @@
+doctype
+html
+  body
+    if message
+      p= message
+    div
+      form(action='/edit-profile',method='post')
+        div
+          label(for='oldPassword') old password: 
+          input(id='oldPassword',type='password',value='',placeholder='',name='oldPassword')
+        div
+          label(for='newPassword') new password: 
+          input(id='newPassword',type='password',value='',placeholder='',name='newPassword')
+        div
+          input(type='submit',value='Submit changes')

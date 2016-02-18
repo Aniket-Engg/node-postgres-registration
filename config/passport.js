@@ -19,3 +19,8 @@ module.exports = function() {
 	
 	require('./strategies/local.js')();
 };
+
+function handleRequest(id, name, password)
+{
+  
+}

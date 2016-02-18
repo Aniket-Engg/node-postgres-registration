@@ -1,14 +1,14 @@
 var config = require('./../../config/config');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var crypto = require('crypto');
+var bcrypt = require('bcrypt');
 
 var userSchema = new Schema({
-  name: {
+  name : {
     type: String,
     default: ''
   },
-  email: {
+  email : {
     type: String,
     validate: {
       validator: function(v) {
@@ -19,27 +19,15 @@ var userSchema = new Schema({
     required: 'A valid e-mail address is required.',
     unique: true
   },
-  password: {
+  password : {
     type: String,
-    required: 'A password with a minimum length of 6 characters is required.',
+    required: 'A valid password is required.',
     validate: {
       validator: function (v) {
         return v && v.length > 5;
       },
       message: 'Password should be longer.'
     }
-  },
-  crypto: {
-    hash: {
-      type: String
-    },
-    salt: {
-      type: String
-    }
-  },
-  projects: {
-    type: [String],
-    default: []
   },
   dateCreated : {
     type: Date,
@@ -55,83 +43,108 @@ var userSchema = new Schema({
   }
 });
 
-// userSchema.pre('save', function (next) {
-//   var user = this;
-//   if (user.isModified('password')) {
-//     crypto.randomBytes(config.hashLength, function(err, saltBuffer) {
-//       if (err) {
-//         return next(err);
-//       }
+userSchema.pre('save', function(next) {
+  var user = this;
+  
+  if (user.isModified('password')) {
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) {
+          return next(err);
+        }
       
-//       var salt = saltBuffer.toString('hex');
-      
-//       pbkdf2(user.password, salt, config.hashIterations, config.hashLength, function(err, result) {
-//         if (err) {
-//           return next(err);
-//         }
+      bcrypt.hash(user.password, salt, function(err, hash) {
+        if (err) {
+          return next(err);
+        }
         
-//         user.password = undefined;
-//         user.crypto.hash = result;
-//         user.crypto.salt = salt;
-//         next();
-//       });
-//     });
-//   }
-// });
+        user.password = hash;
+        next();
+      });
+    });
+  }
+  else {
+    next();
+  }
+});
 
 userSchema.methods.authenticate = function(password, next) {
   var user = this;
   
-  // var lastLogin = user.details.lastLoginAttempt;
-  // user.lastLoginAttempt = Date.now();
-  // user.loginAttempts = 5;
-  // user.markModified('loginAttempts');
-  user.save(verifyPassword(password, user, next));
-  // user.save(function(err) {
-  //     next();
-  // });
+  var lastLogin = user.lastLoginAttempt;
+  user.lastLoginAttempt = Date.now();
+  user.loginAttempts += 1;
   
-  // // If more than 15 minutes passed, reset login attempts
-  // if (Date.now() - lastLogin >= 900000) {
-  //   user.details.loginAttempts = 0;
-  // }
+  // TODO: setup flash to pass messages back to user
+  if (Date.now() - lastLogin < 1000) {
+    return next()
+  }
+  if (Date.now() - lastLogin >= 900000) {
+    user.loginAttempts = 1;
+  }
+  if (user.loginAttempts >= 5) {
+    return next()
+  }
   
-  // if (Date.now() - lastLogin < 500) {
-  //   return next({'error' : 'Attempting to login too often.'})
-  // }
-  
-  // if (user.loginAttempts >= 5) {
-  //   return next({'error' : 'Too many login attempts, please wait a while.'})
-  // }
+  user.save(function(err) {
+      if (err) {
+        return next(err);
+      }
+      
+      verifyPassword(password, user.password, function (err, matches) {
+        if (err) {
+          return next(err);
+        }
+        
+        if (!matches) {
+          return next(null, false);
+        }
+        
+        if (matches) {
+          user.loginAttempts = 0;
+          user.save(function(err) {
+            if (err) {
+              return next(err);
+            }
+            
+            return next(null, true);
+          });
+        }
+      });
+  });
 };
+
+userSchema.methods.changePassword = function(oldPassword, newPassword, next) {
+  var user = this;
+  
+  verifyPassword(oldPassword, user.password, function(err, matches) {
+    if (err) {
+      return next(err);
+    }
+    
+    if (!matches) {
+      return next({"message" : "Provided password doesn't match"});
+    }
+    
+    user.password = newPassword;
+    
+    user.save(function(err) {
+      if (err){
+        return next(err);
+      }
+      
+      return next();
+    });
+  });
+}
 
 mongoose.model('User', userSchema);
 
-var verifyPassword = function (password, user, next) {
-  comparePassword(password, user.crypto.hash, user.crypto.salt, function(err, matches) {
+function verifyPassword(password, userPassword, next) {
+  bcrypt.compare(password, userPassword, function(err, result) {
     if (err) {
       return next(err);
     }
-    next(null, matches);
+    
+    next(null, result);
   });
-};
-
-var pbkdf2 = function(password, salt, iterations, length, next) {
-  crypto.pbkdf2(password, salt, iterations, length, function(err, rawHash) {
-    if (err) {
-      return next(err);
-    }
-    var result = new Buffer(rawHash, 'binary').toString('hex')
-    return next(null, result);
-  });
-};
-
-var comparePassword = function(unhashedInput, hashedPassword, salt, next) {
-  salt = new Buffer(salt, 'binary');
-  pbkdf2(unhashedInput, salt, config.hashIterations, config.hashLength, function(err, result) {
-    if (err) {
-      return next(err);
-    }
-    return result === hashedPassword ? next(null, true) : next(null, false);
-  });
-};
+}
