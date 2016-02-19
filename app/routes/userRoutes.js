@@ -1,7 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
-var usersController = require('./../controllers/usersController');
+var usersController = require('./../controllers/userController');
 
 router.get('/register', function(req, res) {
 	res.render('register', {message: 'register'});
@@ -35,11 +35,11 @@ router.get('/profile', isLoggedIn, function (req, res, next) {
     });
 });
 
-router.get('/edit-profile', isLoggedIn, function(req, res) {
-	res.render('edit-profile', {message: 'edit profile'});
+router.get('/editPassword', isLoggedIn, function(req, res) {
+	res.render('editPassword', {message: 'edit password'});
 });
 
-router.post('/edit-profile', isLoggedIn, usersController.changePassword);
+router.post('/editPassword', isLoggedIn, usersController.changePassword);
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
