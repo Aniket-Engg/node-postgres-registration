@@ -10,6 +10,9 @@ var userSchema = new Schema({
   },
   email : {
     type: String,
+    set: function(v) {
+      return v.toLowerCase();
+    },
     validate: {
       validator: function(v) {
         return /.+\@.+\..+/.test(v);
@@ -17,7 +20,7 @@ var userSchema = new Schema({
       message: 'Please fill a valid e-mail address.'
     },
     required: 'A valid e-mail address is required.',
-    unique: true
+    unique: 'E-mail address already registered'
   },
   password : {
     type: String,

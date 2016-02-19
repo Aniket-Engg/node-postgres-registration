@@ -10,4 +10,6 @@ html
       a(href='/register') register
     if (user)
       p You are currently logged in as #{user.email}
+      a(href='/profile') profile
+      br
       a(href='/logout') logout
