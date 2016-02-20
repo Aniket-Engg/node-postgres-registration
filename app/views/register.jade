@@ -1,18 +1,23 @@
 doctype
-html
+html(lang='en')
+  head
+    title Registration Page
+    meta(charset='utf8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/css/login.css', rel='stylesheet')
   body
-    if message
-      p= message
-    div
-      form(action='/users/',method='post')
-        div
-          label(for='name') name
-          input(id='name',type='text',value='',placeholder='Name',name='name')
-        div
-          label(for='email') email
-          input(id='email',type='text',value='',placeholder='@',name='email', required)
-        div
-          label(for='password') password
-          input(id='password',type='password',value='',placeholder='',name='password', required)
-        div
-          input(type='submit',value='Register')
+    div.container
+      form.form-signin(action='/users',method='post')
+        h3.form-signin-heading Create a new account
+        label.sr-only(for='inputName') Name
+        input.form-control#inputName(type='text', placeholder='Name',name='name')
+        label.sr-only(for='inputEmail') E-mail address
+        input.form-control#inputEmail(type='text', placeholder='E-mail',name='email', required autofocus)
+        label.sr-only(for='inputPassword') Password
+        input.form-control#inputPassword(type='password', placeholder='Password' name='password', required)
+        input.btn.btn-lg.btn-primary.btn-block(type='submit', value='Register')
+        br
+        div.form-group
+          label Already have an account? #[a(href='/login') Login]

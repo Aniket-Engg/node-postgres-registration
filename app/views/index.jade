@@ -1,15 +1,24 @@
 doctype
-html
+html(lang='en')
   head
-    title= title
+    title Login Page
+    meta(charset='utf8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/css/login.css', rel='stylesheet')
   body
-    p= message
-    if (!user)
-      a(href='/login') login
-      br
-      a(href='/register') register
-    if (user)
-      p You are currently logged in as #{user.email}
-      a(href='/profile') profile
-      br
-      a(href='/logout') logout
+    div.container
+      h3 Simple Login/Registration Test
+      div.row
+        div.col-xs-6
+          div.well
+            if (!user)
+              a.btn.btn-primary(href='/login') login
+              br
+              a.btn.btn-primary(href='/register') register
+            if (user)
+              p You are currently logged in as #{user.email}
+              a.btn.btn-primary(href='/profile') profile
+              br
+              a.btn(href='/logout') logout

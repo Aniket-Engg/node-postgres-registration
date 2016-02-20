@@ -4,7 +4,7 @@ var router = express.Router();
 var usersController = require('./../controllers/userController');
 
 router.get('/', function(req, res) {
-	res.render('index', {title: 'Index', message: 'index', user: req.user});
+	res.redirect('/login');
 });
 
 module.exports = router;

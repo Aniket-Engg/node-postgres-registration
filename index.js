@@ -28,5 +28,5 @@ server.on('listening', onListening);
 // Event handlers
 function onListening() {
 	console.log(colors.green('Listening on port: %s'), server.address().port);
-  console.log(colors.green('Running on %s environment.'), process.env.NODE_ENV);
+  console.log(colors.green('Running on %s environment config.'), process.env.NODE_ENV);
 }

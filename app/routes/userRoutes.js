@@ -12,12 +12,15 @@ router.get('/register', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/profile');
+  }
 	res.render('login', {message: 'login'});
 });
 
 router.get('/logout', function(req, res) {
   req.logout();
-	res.redirect('/');
+	res.redirect('/login');
 });
 
 router.post('/login',
@@ -30,7 +33,6 @@ router.post('/login',
 
 router.get('/profile', isLoggedIn, function (req, res, next) {
   res.render('profile', {
-    welcomeMessage: 'Welcome ' + req.user.name,
     user: req.user
     });
 });
