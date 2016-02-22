@@ -12,7 +12,9 @@ Simple login/registration using Node, Express and MongoDB.
 - [ ] Delete account, confirming the action with password.
 
 ### Development
-- [ ] Make the UI look nice :)
+- [x] Make the UI look decent :)
+- [x] Restructure the routes towards a RESTful API backend
+- [ ] Move the browser client to Angular
 
 ### Setup Instructions
 1. Make sure you have Node with npm and MongoDB installed in your system.
