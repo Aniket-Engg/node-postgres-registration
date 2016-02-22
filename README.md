@@ -13,7 +13,7 @@ Simple login/registration using Node, Express and MongoDB.
 
 ### Development
 - [x] Make the UI look decent :)
-- [x] Restructure the routes towards a RESTful API backend
+- [ ] Restructure the routes to provide a RESTful API backend
 - [ ] Move the browser client to Angular
 
 ### Setup Instructions
