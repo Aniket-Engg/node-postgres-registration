@@ -18,6 +18,5 @@ Simple login/registration using Node, Express and MongoDB.
 
 ### Setup Instructions
 1. For the API subdomain to work on a local server, add api.localhost.com to your hosts file.
-2. Make sure you have Node with npm and MongoDB installed in your system.
-3. Run MongoDB on the default port.
-4. Go to the project root folder in the terminal and run "npm start" or "nodemon index" if you have nodemon installed.
+2. Make sure you have Node with npm and MongoDB installed and running in the default port.
+3. Go to the project root folder in the terminal and run "npm start" or "nodemon index" if you have nodemon installed.
