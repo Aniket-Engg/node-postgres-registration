@@ -1,18 +1,18 @@
 var User = require('mongoose').model('User');
 
-exports.createUser = function(req, res) {
+exports.createUser = function(req, next) {
   User.create(req.body, function(err, user) {
     if (err) {
       // TODO
       // if the err is passed, it leaks the user data when the email is not unique
-      return res.status(400).json({"message": "Invalid data."});
+      return next(err);
     }
     
     if (user) {
-      return res.status(201).json({"id" : user._id, "name" : user.name, "email" : user.email, "links" : [{rel: "self", href: "/users/" +  user.id}]});
+      return next(null, user);
     }
     
-    return res.status(500).json({"message" : "Something went wrong in our server."});
+    return next({status: 500, message: "Internal error"});
   });
 };
 
@@ -31,14 +31,13 @@ exports.getUser = function(req, res) {
 };
 
 exports.listUsers = function(req, res) {
-  User.find({}, "-password", function(err, users) {
+  User.find({}, "-password -loginAttempts -__v", function(err, users) {
     if (err) {
       return res.status(500).json({"message" : "Something went wrong in our server."});
     }
     
     if (users) {
-      var data = {"users" : users};
-      return res.status(200).json(data);
+      return res.status(200).json(users);
     }
     
     return res.status(500).json({"message" : "Something went wrong in our server."});
