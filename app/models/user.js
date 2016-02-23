@@ -20,7 +20,7 @@ var userSchema = new Schema({
       message: 'Please fill a valid e-mail address.'
     },
     required: 'A valid e-mail address is required.',
-    unique: 'E-mail address already registered'
+    unique: 'This e-mail address has been already registered'
   },
   password : {
     type: String,
@@ -93,7 +93,7 @@ userSchema.methods.authenticate = function(password, next) {
         return next(err);
       }
       
-      verifyPassword(password, user.password, function (err, matches) {
+      user.verifyPassword(password, function (err, matches) {
         if (err) {
           return next(err);
         }
@@ -119,7 +119,7 @@ userSchema.methods.authenticate = function(password, next) {
 userSchema.methods.changePassword = function(oldPassword, newPassword, next) {
   var user = this;
   
-  verifyPassword(oldPassword, user.password, function(err, matches) {
+  user.verifyPassword(oldPassword, function(err, matches) {
     if (err) {
       return next(err);
     }
@@ -140,14 +140,71 @@ userSchema.methods.changePassword = function(oldPassword, newPassword, next) {
   });
 }
 
-mongoose.model('User', userSchema);
-
-function verifyPassword(password, userPassword, next) {
-  bcrypt.compare(password, userPassword, function(err, result) {
+userSchema.methods.changeEmail = function(password, newEmail, next) {
+  var user = this;
+  user.verifyPassword(password, function(err, matches) {
     if (err) {
       return next(err);
     }
     
-    next(null, result);
+    if (!matches) {
+      return next({"message" : "Provided password doesn't match"});
+    }
+    
+    user.email = newEmail;
+    
+    user.save(function(err) {
+      if (err){
+        return next(err);
+      }
+      
+      return next();
+    });
   });
 }
+
+userSchema.methods.changeName = function(newName, next) {
+  var user = this;
+  user.name = newName;
+  user.save(function(err) {
+    if (err){
+      return next(err);
+    }
+    
+    return next();
+  });
+};
+
+userSchema.methods.deleteUser = function(password, next) {
+  var user = this;
+  user.verifyPassword(password, function(err, matches) {
+    if (err) {
+      return next(err);
+    }
+    
+    if (!matches) {
+      return next({"message" : "Provided password doesn't match"});
+    }
+    
+    user.remove(function(err) {
+      if (err) {
+        return next({"message" : "Internal error, please try again"});
+      }
+      next();
+    });
+  });
+};
+
+userSchema.methods.verifyPassword = function(password, next) {
+  var user = this;
+  bcrypt.compare(password, user.password, function(err, result) {
+    if (err) {
+      return next({"message" : "Internal error, please try again"});
+    }
+    
+    next(null, result);
+  });
+};
+
+
+mongoose.model('User', userSchema);

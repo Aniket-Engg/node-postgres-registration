@@ -1,75 +1,229 @@
 var User = require('mongoose').model('User');
 
-exports.createUser = function(req, next) {
-  User.create(req.body, function(err, user) {
+exports.createUser = function (req, res, next) {
+  User.create(req.body, function (err, user) {
     if (err) {
-      // TODO
-      // if the err is passed, it leaks the user data when the email is not unique
-      return next(err);
+      return res.status(400).json({
+        message: 'Bad input. User already exists'
+      });
     }
-    
+
     if (user) {
-      return next(null, user);
+      return res.status(200).json({
+        id: user._id,
+        name: user.name,
+        email: user.email
+      });
     }
-    
-    return next({status: 500, message: "Internal error"});
+    else {
+      next();
+    }
   });
 };
 
-exports.getUser = function(req, res) {
-  User.findOne({"_id" : req.params.id}, "-password", function(err, user) {
+exports.getUser = function (req, res, next) {
+  User.findOne({ "_id": req.params.id }, "-password", function (err, user) {
     if (err) {
-      return res.status(400).json({"message": "User not found"});
+      return res.status(400).json({
+        message: 'User not found'
+      });
     }
-    
+
     if (user) {
-      return res.status(200).json({"id" : user._id, "name" : user.name, "email" : user.email});
+      return res.status(200).json({
+        id: user._id,
+        name: user.name,
+        email: user.email
+      });
     }
-    
-    return res.status(500).json({"message" : "Something went wrong in our server."});
+    else {
+      next();
+    }
   });
 };
 
-exports.listUsers = function(req, res) {
-  User.find({}, "-password -loginAttempts -__v", function(err, users) {
+exports.listUsers = function (req, res, next) {
+  User.find({}, "-password -loginAttempts -__v", function (err, users) {
     if (err) {
-      return res.status(500).json({"message" : "Something went wrong in our server."});
+      return res.status(500).json({
+        message: 'Internal error, please try again.'
+      });
     }
-    
+
     if (users) {
       return res.status(200).json(users);
     }
-    
-    return res.status(500).json({"message" : "Something went wrong in our server."});
+    else {
+      next();
+    }
   });
 };
 
-// exports.modifyUser = function(req, res) {
-//   res.status(200).json(req.body);
-// };
+exports.changeName = function (req, res, next) {
+  var decodedId = req.decoded.id;
+  var paramId = req.params.id;
+  var decodedEmail = req.decoded.email;
+  var newName = req.body.name;
 
-// function changePassword(req, res) {
-//   User.findOne({"email" : req.user.email}, function(err, user) {
-//     if (err) {
-//       return res.sendStatus(500);
-//     }
-//     else if (user) {
-// 			var oldPassword = req.body.oldPassword;
-//       var newPassword = req.body.newPassword;
-      
-//       if (!oldPassword || !newPassword) {
-// 			   return res.status(400).json({"message" : "Wrong input"});
-//       }
-      
-//       user.changePassword(oldPassword, newPassword, function(err) {
-//         if (err) {
-//           return res.json(err);
-//         }
-//         return res.redirect('/profile');
-//       });
-// 		}
-//     else {
-// 			return res.status(404).json({"message" : "User account not found."});
-//     }
-//   });
-// }
+  if (!newName) {
+    return res.status(400).json({
+      message: 'Incomplete input. Please provide the desired name in the body.'
+    });
+  }
+
+  validateUserTokenId(decodedId, paramId, function (err) {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+      if (err || !user) {
+        return res.status(400).json({
+          message: 'User not found'
+        });
+      }
+
+      user.changeName(newName, function (err) {
+        if (err) {
+          return res.status(500).json({
+            message: 'Internal error, please try again.'
+          });
+        }
+        
+        return res.status(200).json({
+          message: 'Success, changed name associated with this user'
+        });
+      });
+    });
+  });
+};
+
+exports.changePassword = function (req, res, next) {
+  var decodedId = req.decoded.id;
+  var decodedEmail = req.decoded.email;
+  var paramId = req.params.id;
+  var oldPasword = req.body.oldPassword;
+  var newPassword = req.body.newPassword;
+  
+  if (!oldPasword || !newPassword) {
+    return res.status(400).json({
+      message: 'Incomplete input, please provide an old password and a new one'
+    });
+  }
+
+  validateUserTokenId(decodedId, paramId, function (err) {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+      if (err || !user) {
+        return res.status(400).json({
+          message: 'User not found'
+        });
+      }
+
+      user.changePassword(oldPasword, newPassword, function (err) {
+        if (err) {
+          return res.status(400).json(err);
+        }
+        
+        return res.status(200).json({
+          message: 'Success, changed password associated with this user'
+        });
+      });
+    });
+  });
+};
+
+exports.changeEmail = function (req, res, next) {
+  var decodedId = req.decoded.id;
+  var decodedEmail = req.decoded.email;
+  var paramId = req.params.id;
+  var newEmail = req.body.newEmail;
+  var password = req.body.password;
+  
+  if (!newEmail || !password) {
+    return res.status(400).json({
+      message: 'Incomplete input, please provide a password and the new email'
+    });
+  }
+
+  validateUserTokenId(decodedId, paramId, function (err) {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+      if (err || !user) {
+        return res.status(400).json({
+          message: 'User not found'
+        });
+      }
+
+      user.changeEmail(password, newEmail, function (err) {
+        if (err) {
+          return res.status(400).json(err);
+        }
+        
+        return res.status(200).json({
+          message: 'Success, changed email associated with this user'
+        });
+      });
+    });
+  });
+};
+
+exports.deleteUser = function (req, res, next) {
+  var decodedId = req.decoded.id;
+  var decodedEmail = req.decoded.email;
+  var paramId = req.params.id;
+  var password = req.body.password;
+  
+  if (!password) {
+    return res.status(400).json({
+      message: 'Incomplete input, please provide a password to confirm delete'
+    });
+  }
+  
+  validateUserTokenId(decodedId, paramId, function (err) {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+      if (err || !user) {
+        return res.status(400).json({
+          message: 'User not found'
+        });
+      }
+
+      user.deleteUser(password, function (err) {
+        if (err) {
+          return res.status(400).json(err);
+        }
+        
+        return res.status(200).json({
+          message: 'Success, user deleted'
+        });
+      });
+    });
+  });
+};
+
+function validateUserTokenId(decodedId, paramId, next) {
+  if (!decodedId || !paramId) {
+    return next({
+      message: 'Missing credentials for provided user URI'
+    });
+  }
+
+  if (decodedId.toString() !== paramId.toString()) {
+    return next({
+      message: 'Invalid credentials for provided user URI'
+    });
+  }
+  else {
+    next();
+  }
+}

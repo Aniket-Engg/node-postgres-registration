@@ -28,7 +28,7 @@ var initApp = function() {
 	app.use(express.static('./public'));
   
 	app.use(session({
-		secret: 'superNonSecretCats',
+		secret: 'nonSecretCats',
 		resave: false,
 		saveUninitialized: true
 	}));
