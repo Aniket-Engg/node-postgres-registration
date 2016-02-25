@@ -2,7 +2,9 @@ var router = require('express').Router();
 
 // TODO
 // Browser client route here
-
+router.get('/', function(req, res) {
+  res.sendfile('./public/app/index.html');
+});
 
 // Browser error routes
 router.use(function(req, res) {

@@ -4,7 +4,7 @@ exports.createUser = function (req, res, next) {
   User.create(req.body, function (err, user) {
     if (err) {
       return res.status(400).json({
-        message: 'Bad input. User already exists'
+        message: 'Input data validation failed or user already exists.'
       });
     }
 
@@ -22,7 +22,9 @@ exports.createUser = function (req, res, next) {
 };
 
 exports.getUser = function (req, res, next) {
-  User.findOne({ "_id": req.params.id }, "-password", function (err, user) {
+  var decodedId = req.decoded._id;
+  
+  User.findOne({_id: decodedId}, "-password", function (err, user) {
     if (err) {
       return res.status(400).json({
         message: 'User not found'
@@ -60,10 +62,9 @@ exports.listUsers = function (req, res, next) {
 };
 
 exports.changeName = function (req, res, next) {
-  var decodedId = req.decoded.id;
+  var decodedId = req.decoded._id;
   var paramId = req.params.id;
-  var decodedEmail = req.decoded.email;
-  var newName = req.body.name;
+  var newName = req.body.newName;
 
   if (!newName) {
     return res.status(400).json({
@@ -76,7 +77,7 @@ exports.changeName = function (req, res, next) {
       return res.status(400).json(err);
     }
 
-    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+    User.findOne({ _id: decodedId }, function (err, user) {
       if (err || !user) {
         return res.status(400).json({
           message: 'User not found'
@@ -89,7 +90,7 @@ exports.changeName = function (req, res, next) {
             message: 'Internal error, please try again.'
           });
         }
-        
+
         return res.status(200).json({
           message: 'Success, changed name associated with this user'
         });
@@ -99,12 +100,11 @@ exports.changeName = function (req, res, next) {
 };
 
 exports.changePassword = function (req, res, next) {
-  var decodedId = req.decoded.id;
-  var decodedEmail = req.decoded.email;
+  var decodedId = req.decoded._id;
   var paramId = req.params.id;
   var oldPasword = req.body.oldPassword;
   var newPassword = req.body.newPassword;
-  
+
   if (!oldPasword || !newPassword) {
     return res.status(400).json({
       message: 'Incomplete input, please provide an old password and a new one'
@@ -116,7 +116,7 @@ exports.changePassword = function (req, res, next) {
       return res.status(400).json(err);
     }
 
-    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+    User.findOne({ _id: decodedId }, function (err, user) {
       if (err || !user) {
         return res.status(400).json({
           message: 'User not found'
@@ -127,7 +127,7 @@ exports.changePassword = function (req, res, next) {
         if (err) {
           return res.status(400).json(err);
         }
-        
+
         return res.status(200).json({
           message: 'Success, changed password associated with this user'
         });
@@ -137,12 +137,11 @@ exports.changePassword = function (req, res, next) {
 };
 
 exports.changeEmail = function (req, res, next) {
-  var decodedId = req.decoded.id;
-  var decodedEmail = req.decoded.email;
+  var decodedId = req.decoded._id;
   var paramId = req.params.id;
   var newEmail = req.body.newEmail;
   var password = req.body.password;
-  
+
   if (!newEmail || !password) {
     return res.status(400).json({
       message: 'Incomplete input, please provide a password and the new email'
@@ -154,7 +153,7 @@ exports.changeEmail = function (req, res, next) {
       return res.status(400).json(err);
     }
 
-    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+    User.findOne({ _id: decodedId }, function (err, user) {
       if (err || !user) {
         return res.status(400).json({
           message: 'User not found'
@@ -165,7 +164,7 @@ exports.changeEmail = function (req, res, next) {
         if (err) {
           return res.status(400).json(err);
         }
-        
+
         return res.status(200).json({
           message: 'Success, changed email associated with this user'
         });
@@ -175,23 +174,22 @@ exports.changeEmail = function (req, res, next) {
 };
 
 exports.deleteUser = function (req, res, next) {
-  var decodedId = req.decoded.id;
-  var decodedEmail = req.decoded.email;
+  var decodedId = req.decoded._id;
   var paramId = req.params.id;
   var password = req.body.password;
-  
+
   if (!password) {
     return res.status(400).json({
       message: 'Incomplete input, please provide a password to confirm delete'
     });
   }
-  
+
   validateUserTokenId(decodedId, paramId, function (err) {
     if (err) {
       return res.status(400).json(err);
     }
 
-    User.findOne({ "email": decodedEmail, "_id": decodedId }, function (err, user) {
+    User.findOne({ _id: decodedId }, function (err, user) {
       if (err || !user) {
         return res.status(400).json({
           message: 'User not found'
@@ -202,7 +200,7 @@ exports.deleteUser = function (req, res, next) {
         if (err) {
           return res.status(400).json(err);
         }
-        
+
         return res.status(200).json({
           message: 'Success, user deleted'
         });

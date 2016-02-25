@@ -1,0 +1,36 @@
+<html>
+
+<head>
+  <title>Node Login/Registration</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.5/angular.min.js"></script>
+  <script src="http://localhost:3000/app/app.js"></script>
+</head>
+
+<body ng-app="app" ng-controller="Main as main">
+  <div ng-show="!main.isAuthed()">
+    <input type="text" ng-model="main.name" placeholder="name">
+    <br>
+    <input type="text" ng-model="main.email" placeholder="email">
+    <br>
+    <input type="password" ng-model="main.password" placeholder="password">
+    <br>
+    <br>
+    <button ng-click="main.register()">Register</button>
+    <button ng-click="main.login()">Login</button>
+  </div>
+  <div ng-show="main.isAuthed()">
+    <h4>Hey there!</h5>
+    <button ng-click="main.changeName()">Change Name</button>
+    <button ng-click="">Change Email</button>
+    <button ng-click="">Change Password</button>
+    <br><br>
+    <button ng-click="main.logout()">Logout</button>
+  </div>
+  <br>
+  <br><p>{{main.message}}</p> 
+  <br>
+  <br>
+  <br>
+</body>
+
+</html>

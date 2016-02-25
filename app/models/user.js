@@ -77,7 +77,6 @@ userSchema.methods.authenticate = function(password, next) {
   user.lastLoginAttempt = Date.now();
   user.loginAttempts += 1;
   
-  // TODO: setup flash to pass messages back to user
   if (Date.now() - lastLogin < 1000) {
     return next()
   }

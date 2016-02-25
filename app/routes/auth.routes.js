@@ -1,14 +1,14 @@
 var router = require('express').Router();
 var jwt = require('jsonwebtoken');
 var User = require('mongoose').model('User');
-var config = require('./../../../config/config');
-var usersController = require('./../../controllers/userController');
+var config = require('./../../config/config');
+var usersController = require('./../controllers/users.controller');
 
 // Registration of new users via API
-router.post('/register', usersController.createUser);
+router.post('/auth/register', usersController.createUser);
 
 // Authentication to obtain a token
-router.post('/authenticate', function(req, res) {
+router.post('/auth/authenticate', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
   
@@ -38,10 +38,9 @@ router.post('/authenticate', function(req, res) {
           });
       }
       
-      jwt.sign({email: user.email, id: user._id}, config.secret, {expiresIn: 86400}, function(token) {
+      jwt.sign({_id: user._id}, config.secret, {expiresIn: config.jwtExpires, issuer: user._id}, function(token) {
         return res.status(200).json({
-          message: 'Authenticated, token generated',
-          expiresInSeconds: 86400,
+          message: 'Authenticated, token attached',
           token: token
           });
       });
@@ -51,19 +50,18 @@ router.post('/authenticate', function(req, res) {
 
 // Any route past this point requires a valid auth token
 router.use(function(req, res, next) {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
+  var token = req.body.token || req.query.token || req.headers['authorization'];
+  
   if (token) {
     jwt.verify(token, config.secret, function(err, decoded) {      
       if (err) {
-        // change to unauthorized
         return res.status(401).json({
           message: 'Failed to authenticate token.'
-          });
+        });
       }
       
-      User.findOne({'email' : decoded.email}, function(err, user) {
-        if (err || !user || user._id.toString() !== decoded.id.toString()) {
+      User.findOne({'_id' : decoded._id}, function(err, user) {
+        if (err || !user) {
           return res.status(401).json({
             message: 'Valid token provided but user not associated with it.'
             });
@@ -76,7 +74,7 @@ router.use(function(req, res, next) {
     });
   }
   else {
-    return res.status(403).json({ 
+    return res.status(401).json({ 
         message: 'No token provided.'
     });
   }
