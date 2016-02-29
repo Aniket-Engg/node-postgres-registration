@@ -3,14 +3,15 @@ var router = require('express').Router();
 // TODO
 // Browser client route here
 router.get('/', function(req, res) {
-  res.sendfile('./public/app/index.html');
+  res.redirect('./app/index.html');
 });
 
 // Browser error routes
 router.use(function(req, res) {
   res.status(404);
   return res.render('error', {
-    errorNumber: 404,
+    title: 'Something went wrong',
+    error: 404,
     message: 'We don\'t know what happened, but we\'re working on it :)'
   });
 });

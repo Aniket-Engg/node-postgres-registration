@@ -33,7 +33,7 @@ var setupMongo = function () {
 }
 
 var loadModels = function() {
-	require('./../app/models/user');
+	require('./../models/user');
 };
 
 module.exports = setupMongo;

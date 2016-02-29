@@ -5,7 +5,6 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Dependencies
 var config = require('./config/config');
-var http = require('http');
 var express = require('./config/express');
 var mongoose = require('./config/mongoose');
 var colors = require('colors');
@@ -16,17 +15,9 @@ var db = mongoose();
 
 // Create server
 var app = express();
-var server = http.createServer(app);
-
-// Setup passport
-var passport = require('./config/passport')();
 
 // Start listening
-server.listen(config.port);
-server.on('listening', onListening);
-
-// Event handlers
-function onListening() {
-	console.log(colors.green('Listening on port: %s'), server.address().port);
+app.listen(config.port, function() {
+	console.log(colors.green('Listening on port: %s'), config.port);
   console.log(colors.green('Running on %s environment config.'), process.env.NODE_ENV);
-}
+});

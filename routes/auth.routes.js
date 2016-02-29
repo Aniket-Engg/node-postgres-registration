@@ -1,7 +1,7 @@
 var router = require('express').Router();
 var jwt = require('jsonwebtoken');
 var User = require('mongoose').model('User');
-var config = require('./../../config/config');
+var config = require('./../config/config');
 var usersController = require('./../controllers/users.controller');
 
 // Registration of new users via API

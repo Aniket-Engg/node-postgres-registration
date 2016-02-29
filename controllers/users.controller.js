@@ -64,7 +64,7 @@ exports.listUsers = function (req, res, next) {
 exports.changeName = function (req, res, next) {
   var decodedId = req.decoded._id;
   var paramId = req.params.id;
-  var newName = req.body.newName;
+  var newName = req.body.name;
 
   if (!newName) {
     return res.status(400).json({
@@ -209,6 +209,7 @@ exports.deleteUser = function (req, res, next) {
   });
 };
 
+// TODO: Add admin permissions check here
 function validateUserTokenId(decodedId, paramId, next) {
   if (!decodedId || !paramId) {
     return next({
