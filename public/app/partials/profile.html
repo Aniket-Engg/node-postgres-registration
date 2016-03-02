@@ -1,5 +1,4 @@
-<div>
-  <p>User profile here</p>
-</div>
-<br>
-<a href="/#/logout">Logout</a>
+<h4>Profile</h4>
+<p>Welcome {{user.name || user.email}}</p>
+<button ui-sref="settings">Account settings</button>
+<button ng-click="user.logout()">Logout</button>

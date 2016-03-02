@@ -27,9 +27,7 @@ router.post('/auth/authenticate', function(req, res) {
     
     user.authenticate(password, function(err, valid) {
       if (err) {
-        return res.status(500).json({
-          message: 'Internal error'
-          });
+        return res.status(500).json(err);
       }
       
       if (!valid) {

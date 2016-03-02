@@ -1,0 +1,27 @@
+<h4>Settings</h4>
+<form>
+  <label>User name:</label>
+  <br>
+  <input type="text" placeholder="Your name" ng-model="user.name">
+  <br>
+  <button ng-click="user.changeName()">Change name</button>
+  <br>
+  <br>
+  <label>User email:</label>
+  <br>
+  <input type="email" placeholder="Your email" ng-model="user.email">
+  <br>
+  <button ng-click="user.changeEmail()">Change email</button>
+  <br>
+  <br>
+  <label>Change password:</label>
+  <br>
+  <input type="password" placeholder="Old password" ng-model="user.oldPassword">
+  <br>
+  <input type="password" placeholder="New password" ng-model="user.newPassword">
+  <br>
+  <button ng-click="user.changePassword()">Change password</button>
+  <br>
+  <br>
+  <button ui-sref="profile">Cancel</button>
+</form>

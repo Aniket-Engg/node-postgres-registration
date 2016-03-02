@@ -11,9 +11,9 @@ Simple login/registration using Node, Express and MongoDB.
 - [x] Delete account, confirming the action with password.
 
 ### Development
-- [x] Make the UI look decent :)
 - [x] Restructure the routes to provide a RESTful API backend
-- [ ] Implement the browser client in Angular
+- [x] Implement a basic browser client in Angular
+- [ ] Make the UI look decent :)
 
 ### Setup Instructions
 1. To use the API subdomain, include "127.0.0.1 api.localhost.com" in your OS hosts file.

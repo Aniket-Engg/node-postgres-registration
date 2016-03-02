@@ -1,12 +1,10 @@
-<div>
-  <h4>Login</h4>
-  <form>
-    <input type="email" placeholder="E-mail" ng-model="user.email">
-    <br>
-    <input type="password" placeholder="Password" ng-model="user.password">
-    <br>
-    <button ng-click="user.login()">Login</button>
-    <br>
-  </form>
-  <p>No account yet? <a ng-href="/#/register">Register here</a></p>
-</div>
+<h4>Login</h4>
+<form>
+  <input type="email" placeholder="E-mail" ng-model="user.email">
+  <br>
+  <input type="password" placeholder="Password" ng-model="user.password">
+  <br>
+  <button ng-click="user.login()">Login</button>
+  <br>
+</form>
+<p>No account yet? <a ui-sref="register">Register here</a></p>

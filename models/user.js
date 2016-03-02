@@ -4,17 +4,17 @@ var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
 
 var userSchema = new Schema({
-  name : {
+  name: {
     type: String,
     default: ''
   },
-  email : {
+  email: {
     type: String,
-    set: function(v) {
+    set: function (v) {
       return v.toLowerCase();
     },
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /.+\@.+\..+/.test(v);
       },
       message: 'Please fill a valid e-mail address.'
@@ -22,7 +22,7 @@ var userSchema = new Schema({
     required: 'A valid e-mail address is required.',
     unique: 'This e-mail address has been already registered'
   },
-  password : {
+  password: {
     type: String,
     required: 'A valid password is required.',
     validate: {
@@ -32,34 +32,34 @@ var userSchema = new Schema({
       message: 'Password should be longer.'
     }
   },
-  dateCreated : {
+  dateCreated: {
     type: Date,
     default: Date.now
   },
-  lastLoginAttempt : {
+  lastLoginAttempt: {
     type: Date,
     default: Date.now
   },
-  loginAttempts : {
+  loginAttempts: {
     type: Number,
     default: 0
   }
 });
 
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   var user = this;
-  
+
   if (user.isModified('password')) {
-    bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.genSalt(10, function (err, salt) {
+      if (err) {
+        return next(err);
+      }
+
+      bcrypt.hash(user.password, salt, function (err, hash) {
         if (err) {
           return next(err);
         }
-      
-      bcrypt.hash(user.password, salt, function(err, hash) {
-        if (err) {
-          return next(err);
-        }
-        
+
         user.password = hash;
         next();
       });
@@ -70,137 +70,134 @@ userSchema.pre('save', function(next) {
   }
 });
 
-userSchema.methods.authenticate = function(password, next) {
+userSchema.methods.authenticate = function (password, next) {
   var user = this;
-  
+
   var lastLogin = user.lastLoginAttempt;
   user.lastLoginAttempt = Date.now();
   user.loginAttempts += 1;
-  
-  if (Date.now() - lastLogin < 1000) {
-    return next()
-  }
+
   if (Date.now() - lastLogin >= 900000) {
-    user.loginAttempts = 1;
+    user.loginAttempts = 0;
   }
   if (user.loginAttempts >= 5) {
-    return next()
+    return next({ message: 'You have tried to login too many times, please wait 15 min before trying again' })
   }
-  
-  user.save(function(err) {
+
+  user.save(function (err) {
+    if (err) {
+      return next(err);
+    }
+
+    user.verifyPassword(password, function (err, matches) {
       if (err) {
         return next(err);
       }
-      
-      user.verifyPassword(password, function (err, matches) {
-        if (err) {
-          return next(err);
-        }
-        
-        if (!matches) {
-          return next(null, false);
-        }
-        
-        if (matches) {
-          user.loginAttempts = 0;
-          user.save(function(err) {
-            if (err) {
-              return next(err);
-            }
-            
-            return next(null, true);
-          });
-        }
-      });
+
+      if (!matches) {
+        return next(null, false);
+      }
+
+      if (matches) {
+        user.loginAttempts = 0;
+        user.save(function (err) {
+          if (err) {
+            return next(err);
+          }
+
+          return next(null, true);
+        });
+      }
+    });
   });
 };
 
-userSchema.methods.changePassword = function(oldPassword, newPassword, next) {
+userSchema.methods.changePassword = function (oldPassword, newPassword, next) {
   var user = this;
-  
-  user.verifyPassword(oldPassword, function(err, matches) {
+
+  user.verifyPassword(oldPassword, function (err, matches) {
     if (err) {
       return next(err);
     }
-    
+
     if (!matches) {
-      return next({"message" : "Provided password doesn't match"});
+      return next({ "message": "Provided password doesn't match" });
     }
-    
+
     user.password = newPassword;
-    
-    user.save(function(err) {
-      if (err){
+
+    user.save(function (err) {
+      if (err) {
         return next(err);
       }
-      
+
       return next();
     });
   });
 }
 
-userSchema.methods.changeEmail = function(password, newEmail, next) {
+userSchema.methods.changeEmail = function (newEmail, next) {
   var user = this;
-  user.verifyPassword(password, function(err, matches) {
+  // user.verifyPassword(password, function(err, matches) {
+  //   if (err) {
+  //     return next(err);
+  //   }
+    
+  //   if (!matches) {
+  //     return next({"message" : "Provided password doesn't match"});
+  //   }
+    
+  user.email = newEmail;
+
+  user.save(function (err) {
     if (err) {
       return next(err);
     }
-    
-    if (!matches) {
-      return next({"message" : "Provided password doesn't match"});
-    }
-    
-    user.email = newEmail;
-    
-    user.save(function(err) {
-      if (err){
-        return next(err);
-      }
-      
-      return next();
-    });
+
+    return next();
   });
+  // });
 }
 
-userSchema.methods.changeName = function(newName, next) {
+userSchema.methods.changeName = function (newName, next) {
   var user = this;
   user.name = newName;
-  user.save(function(err) {
-    if (err){
+  user.save(function (err) {
+    if (err) {
       return next(err);
     }
-    
+
     return next();
   });
 };
 
-userSchema.methods.deleteUser = function(password, next) {
+userSchema.methods.deleteUser = function (password, next) {
   var user = this;
-  user.verifyPassword(password, function(err, matches) {
+  user.verifyPassword(password, function (err, matches) {
     if (err) {
       return next(err);
     }
-    
+
     if (!matches) {
-      return next({"message" : "Provided password doesn't match"});
+      return next({ "message": "Provided password doesn't match" });
     }
-    
-    user.remove(function(err) {
+
+    user.remove(function (err) {
       if (err) {
-        return next({"message" : "Internal error, please try again"});
+        return next({ "message": "Internal error, please try again" });
       }
       next();
     });
   });
 };
 
-userSchema.methods.verifyPassword = function(password, next) {
+userSchema.methods.verifyPassword = function (password, next) {
   var user = this;
-  bcrypt.compare(password, user.password, function(err, result) {
+  bcrypt.compare(password, user.password, function (err, result) {
     if (err) {
-      return next({"message" : "Internal error, please try again"});
+      return next({ "message": "Internal error, please try again" });
     }
-    
+
     next(null, result);
   });
 };

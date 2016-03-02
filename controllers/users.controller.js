@@ -22,6 +22,35 @@ exports.createUser = function (req, res, next) {
 };
 
 exports.getUser = function (req, res, next) {
+  var paramsId = req.params.id;
+  
+  if (!paramsId){
+    return res.status(400).json({
+      message: 'Incomplete input, please provide user id as param'
+    });
+  }
+  
+  User.findOne({_id: paramsId}, "-password", function (err, user) {
+    if (err) {
+      return res.status(400).json({
+        message: 'User not found'
+      });
+    }
+
+    if (user) {
+      return res.status(200).json({
+        id: user._id,
+        name: user.name,
+        email: user.email
+      });
+    }
+    else {
+      next();
+    }
+  });
+};
+
+exports.getUserSelf = function (req, res, next) {
   var decodedId = req.decoded._id;
   
   User.findOne({_id: decodedId}, "-password", function (err, user) {
@@ -136,31 +165,33 @@ exports.changePassword = function (req, res, next) {
   });
 };
 
+// TODO allow for permission based editing (admin: can edit associated users)
 exports.changeEmail = function (req, res, next) {
   var decodedId = req.decoded._id;
   var paramId = req.params.id;
-  var newEmail = req.body.newEmail;
-  var password = req.body.password;
+  var email = req.body.email;
+  //var password = req.body.password;
 
-  if (!newEmail || !password) {
+  if (!email) {
     return res.status(400).json({
-      message: 'Incomplete input, please provide a password and the new email'
+      message: 'Incomplete input, please provide a new email'
     });
   }
 
+  // TODO, change to permission based
   validateUserTokenId(decodedId, paramId, function (err) {
     if (err) {
       return res.status(400).json(err);
     }
 
-    User.findOne({ _id: decodedId }, function (err, user) {
+    User.findOne({ _id: paramId }, function (err, user) {
       if (err || !user) {
         return res.status(400).json({
           message: 'User not found'
         });
       }
 
-      user.changeEmail(password, newEmail, function (err) {
+      user.changeEmail(email, function (err) {
         if (err) {
           return res.status(400).json(err);
         }

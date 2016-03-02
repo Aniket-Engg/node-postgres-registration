@@ -1,29 +1,27 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+  <meta charset="utf-8">
+
   <title>Node Login/Registration</title>
+
   <script src="vendor/angular/angular.min.js"></script>
-  <script src="vendor/angular-route/angular-route.min.js"></script>
+  <script src="vendor/ngstorage/ngstorage.min.js"></script>
+  <script src="vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
   <script src="app/app.modules.js"></script>
   <script src="app/app.config.js"></script>
   <script src="app/app.routes.js"></script>
-  <script src="app/app.services.js"></script>
-  <script src="app/app.controllers.js"></script>
+  <script src="app/common/auth.service.js"></script>
+  <script src="app/common/apiInterceptor.service.js"></script>
+  <script src="app/user/user.service.js"></script>
+  <script src="app/user/user.controller.js"></script>
+  <script src="app/user/userSettings.controller.js"></script>
 </head>
 
 <body ng-app="sampleApp">
-  
-  <div ng-controller="UserController as user">
-    <div ng-switch="user.isAuthenticated()">
-      <div ng-switch-when='true'>
-        <p>Welcome {{user.email || user.name}}</p>
-        <button ng-click="user.logout()">Logout</button>
-      </div>
-      <div ng-switch-default>
-          <div ng-view></div>
-      </div>
-    </div>
-  </div>
+
+  <div ui-view></div>
 
 </body>
 
