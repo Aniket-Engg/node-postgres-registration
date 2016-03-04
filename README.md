@@ -15,6 +15,8 @@ Simple login/registration using Node, Express and MongoDB.
 - [x] Restructure the routes to provide a RESTful API backend
 - [x] Implement a basic browser client in Angular
 - [ ] Make the UI look decent :)
+- [ ] Swith from MongoDB to Postgres
+- [ ] Integrate Bower install into start script
 
 ### Setup Instructions
 1. To use the API subdomain, include "127.0.0.1 api.localhost.com" in your OS hosts file.

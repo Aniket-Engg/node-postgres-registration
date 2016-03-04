@@ -3,9 +3,68 @@
 
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Node Login/Registration</title>
 
+  <!-- CSS -->
+  <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"></link>
+  <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap-theme.min.css"></link>
+
+
+  <style>
+    body {
+      padding-top: 40px;
+      padding-bottom: 40px;
+      background-color: #eee;
+    }
+    
+    .form-signin {
+      max-width: 330px;
+      padding: 15px;
+      margin: 0 auto;
+    }
+    
+    .form-signin .form-signin-heading,
+    .form-signin .checkbox {
+      margin-bottom: 10px;
+    }
+    
+    .form-signin .checkbox {
+      font-weight: normal;
+    }
+    
+    .form-signin .form-control {
+      position: relative;
+      height: auto;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      padding: 10px;
+      font-size: 16px;
+    }
+    
+    .form-signin .form-control:focus {
+      z-index: 2;
+    }
+    
+    .form-signin input[type="email"] {
+      margin-bottom: -1px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    
+    .form-signin input[type="password"] {
+      margin-bottom: 10px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  </style>
+
+  <!-- JS -->
+  <script src="vendor/jquery/dist/jquery.min.js"></script>
+  <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="vendor/angular/angular.min.js"></script>
   <script src="vendor/ngstorage/ngstorage.min.js"></script>
   <script src="vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -21,7 +80,51 @@
 
 <body ng-app="sampleApp">
 
+  <div class="container">
+
+    <!-- Static navbar -->
+    <div ng-controller="UserController as user">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+            aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Welcome {{user.name || 'guest'}}!</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+
+            <div ng-switch="user.isAuthenticated()">
+              <div ng-switch-when="true">
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a ng-click="user.logout()">Logout</a></li>
+              </div>
+              </ul>
+              <div ng-switch-default>
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a ui-sref="register">Register</a></li>
+                  <li><a ui-sref="login">Login</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+          <!--/.nav-collapse -->
+        </div>
+        <!--/.container-fluid -->
+      </nav>
+    </div>
+
+    <!-- /container -->
+  </div>
+
+  <!-- Main component for a primary marketing message or call to action -->
+
   <div ui-view></div>
+
 
 </body>
 
