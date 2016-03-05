@@ -14,7 +14,7 @@ Simple login/registration using Node, Express and MongoDB.
 ### Development
 - [x] Restructure the routes to provide a RESTful API backend
 - [x] Implement a basic browser client in Angular
-- [ ] Swith from MongoDB to Postgres
+- [ ] Switch from MongoDB to Postgres
 
 ### Setup Instructions
 1. To use the API subdomain, include "127.0.0.1 api.localhost.com" in your OS hosts file.
