@@ -1,7 +1,12 @@
 <div class="container">
-
-  <h4>Profile</h4>
-  <p>Welcome {{user.name || user.email}}</p>
-  <button ui-sref="settings">Account settings</button>
-
+  <div class="centered-tight">
+    
+    <h4>Welcome back {{user.name || user.email}}</h4>
+    <br>
+    <button ui-sref="settings">Account settings</button>
+    <br>
+    <br>
+    <button ng-click="logout()">Logout</button>
+    
+  </div>
 </div>

@@ -2,33 +2,28 @@ var app = angular.module('sampleApp');
 
 app.config(function ($stateProvider, $urlRouterProvider) {
 
-  $urlRouterProvider.otherwise('/profile');
+  $urlRouterProvider.otherwise('/');
 
   $stateProvider
     .state('login', {
       templateUrl: '/app/partials/login.html',
-      controller: 'UserController',
-      controllerAs: 'user'
+      controller: 'LoginController'
     })
     .state('register', {
       templateUrl: '/app/partials/register.html',
-      controller: 'UserController',
-      controllerAs: 'user'
+      controller: 'LoginController'
     })
     .state('profile', {
-      url: '/profile',
+      url: '/',
       templateUrl: '/app/partials/profile.html',
       controller: 'UserController',
-      controllerAs: 'user',
       resolve: {
         authenticated: verifyAuth
       }
     })
     .state('settings', {
-      url: '/settings',
       templateUrl: '/app/partials/settings.html',
       controller: 'UserSettingsController',
-      controllerAs: 'user',
       resolve: {
         authenticated: verifyAuth
       }

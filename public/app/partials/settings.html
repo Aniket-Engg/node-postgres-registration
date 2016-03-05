@@ -1,30 +1,37 @@
 <div class="container">
-  <h4>Settings</h4>
-  <form>
-    <label>User name:</label>
-    <br>
-    <input type="text" placeholder="Your name" ng-model="user.name">
-    <br>
-    <button ng-click="user.changeName()">Change name</button>
-    <br>
-    <br>
-    <label>User email:</label>
-    <br>
-    <input type="email" placeholder="Your email" ng-model="user.email">
-    <br>
-    <button ng-click="user.changeEmail()">Change email</button>
-    <br>
-    <br>
-    <label>Change password:</label>
-    <br>
-    <input type="password" placeholder="Old password" ng-model="user.oldPassword">
-    <br>
-    <input type="password" placeholder="New password" ng-model="user.newPassword">
-    <br>
-    <button ng-click="user.changePassword()">Change password</button>
-    <br>
-    <br>
-    <button ui-sref="profile">Cancel</button>
-  </form>
+  <div class="centered-tight">
+    <h4>Account Settings</h4>
+    <form>
 
+      <div class="alert alert-success" role="alert" ng-show="alert.success">{{alert.success}}</div>
+      <div class="alert alert-danger" role="alert" ng-show="alert.error">{{alert.error}}</div>
+
+      <br>
+      <label>User name:</label>
+      <br>
+      <input type="text" placeholder="Your name" ng-model="name">
+      <br>
+      <button ng-click="changeName()">Change name</button>
+      <br>
+      <br>
+      <label>User email:</label>
+      <br>
+      <input type="email" placeholder="Your email" ng-model="email">
+      <br>
+      <button ng-click="changeEmail()">Change email</button>
+      <br>
+      <br>
+      <label>Change password:</label>
+      <br>
+      <input type="password" placeholder="Old password" ng-model="oldPassword">
+      <br>
+      <input type="password" placeholder="New password" ng-model="newPassword">
+      <br>
+      <button ng-click="changePassword()">Change password</button>
+      <br>
+      <br>
+      <button ui-sref="profile">Back to profile</button>
+
+    </form>
+  </div>
 </div>

@@ -1,29 +1,47 @@
 var app = angular.module('sampleApp');
 
-app.controller('UserSettingsController', function (User) {
-  var self = this;
+app.controller('UserSettingsController', function (User, $rootScope, $scope) {
 
-  var init = function () {
-    User.getUserData()
-      .then(function (data) {
-        self.name = data.name;
-        self.email = data.email;
-        self.id = data.id;
+  $scope.alert = {
+    success: '',
+    error: ''
+  };
+
+  $scope.name = $rootScope.user.name;
+  $scope.email = $rootScope.user.email;
+  $scope.id = $rootScope.user.id;
+
+  $scope.changeName = function () {
+    User.changeName($scope.id, $scope.name)
+      .then(function () {
+        $scope.alert.success = 'Name changed successfully!';
+      })
+      .catch(function (err) {
+        $scope.alert.error = err;
+        $scope.alert.success = '';
       });
-  }
-
-  self.changeName = function () {
-    User.changeName(self.id, self.name);
   };
 
-  self.changeEmail = function () {
-    User.changeEmail(self.id, self.email);
+  $scope.changeEmail = function () {
+    User.changeEmail($scope.id, $scope.email)
+      .then(function () {
+        $scope.alert.success = 'E-mail changed successfully!';
+      })
+      .catch(function (err) {
+        $scope.alert.error = err;
+        $scope.alert.success = '';
+      });
   };
 
-  self.changePassword = function () {
-    User.changePassword(self.id, self.oldPassword, self.newPassword);
+  $scope.changePassword = function () {
+    User.changePassword($scope.id, $scope.oldPassword, $scope.newPassword)
+      .then(function () {
+        $scope.alert.success = 'Password changed successfully!';
+      })
+      .catch(function (err) {
+        $scope.alert.error = err;
+        $scope.alert.success = '';
+      });
   };
-
-  init();
 
 });

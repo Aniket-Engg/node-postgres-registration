@@ -29,13 +29,10 @@ app.service('User', function ($http, API_URL, $q, $localStorage) {
       password: password
     })
       .then(function (res) {
-        if (res.status === 200) {
-          deferred.resolve();
-        }
-        else {
-          // handle cases
-          deferred.reject('error');
-        }
+        deferred.resolve();
+      })
+      .catch(function (res) {
+        deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
@@ -49,13 +46,10 @@ app.service('User', function ($http, API_URL, $q, $localStorage) {
       password: password
     })
       .then(function (res) {
-        if (res.status === 200) {
-          deferred.resolve();
-        }
-        else {
-          // handle cases
-          deferred.reject('error');
-        }
+        deferred.resolve();
+      })
+      .catch(function (res) {
+        deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
@@ -67,13 +61,10 @@ app.service('User', function ($http, API_URL, $q, $localStorage) {
       name: name
     })
       .then(function (res) {
-        if (res.status === 200) {
-          deferred.resolve();
-        }
-        else {
-          // handle cases
-          deferred.reject('error');
-        }
+        deferred.resolve();
+      })
+      .catch(function (res) {
+        deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
@@ -85,15 +76,11 @@ app.service('User', function ($http, API_URL, $q, $localStorage) {
       email: email
     })
       .then(function (res) {
-        if (res.status === 200) {
-          deferred.resolve();
-        }
-        else {
-          // handle cases
-          deferred.reject('error');
-        }
+        deferred.resolve();
+      })
+      .catch(function (res) {
+        deferred.reject('Invalid new email or already in use by another user');
       });
-
     return deferred.promise;
   };
 
@@ -105,13 +92,10 @@ app.service('User', function ($http, API_URL, $q, $localStorage) {
       newPassword: newPassword
     })
       .then(function (res) {
-        if (res.status === 200) {
-          deferred.resolve();
-        }
-        else {
-          // handle cases
-          deferred.reject('error');
-        }
+        deferred.resolve();
+      })
+      .catch(function (res) {
+        deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
