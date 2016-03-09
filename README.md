@@ -1,5 +1,4 @@
-# Node + MongoDB simple login registration
-Simple login/registration system using Node, Express and MongoDB.
+# Simple Node + MongoDB login registration system
 Postgres version here: https://github.com/anthonynsimon/node-postgres-registration
 
 ## TODO
