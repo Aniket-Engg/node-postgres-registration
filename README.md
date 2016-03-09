@@ -1,5 +1,6 @@
-# nodejs-login-registration
-Simple login/registration using Node, Express and MongoDB.
+# Node + MongoDB simple login registration
+Simple login/registration system using Node, Express and MongoDB.
+Postgres version here: https://github.com/anthonynsimon/node-postgres-registration
 
 ## TODO
 ### Features
@@ -9,12 +10,11 @@ Simple login/registration using Node, Express and MongoDB.
 - [x] Basic way to change password using old one.
 - [x] Basic way to change email validating with password.
 - [x] Delete account, confirming the action with password.
-- [ ] Warning/success messages on angular client.
+- [x] Warning/success messages on angular client.
 
 ### Development
 - [x] Restructure the routes to provide a RESTful API backend
 - [x] Implement a basic browser client in Angular
-- [ ] Switch from MongoDB to Postgres
 
 ### Setup Instructions
 1. To use the API subdomain, include "127.0.0.1 api.localhost.com" in your OS hosts file.
