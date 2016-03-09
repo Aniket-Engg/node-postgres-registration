@@ -1,7 +1,8 @@
 var router = require('express').Router();
 var jwt = require('jsonwebtoken');
-var User = require('mongoose').model('User');
+var User = require('./../models/user');
 var config = require('./../config/config');
+var Promise = require('promise');
 var usersController = require('./../controllers/users.controller');
 
 // Registration of new users via API
@@ -9,71 +10,55 @@ router.post('/auth/register', usersController.createUser);
 
 // Authentication to obtain a token
 router.post('/auth/authenticate', function(req, res) {
-  var email = req.body.email;
-  var password = req.body.password;
-  
-  if (!email || !password) {
-    return res.status(400).json({
-      message: "Missing email and/or password"
-      });
-  }
-  
-  User.findOne({'email' : email}, function(err, user) {
-    if (err || !user) {
-      return res.status(404).json({
-        message: 'User not found'
+  User.authenticate(req.body)
+    .then(function(result) {
+      if (result.isAuthorized === true) {
+        jwt.sign({ sub: result.id }, config.SECRET, { expiresIn: config.JWT_EXPIRATION, issuer: 'masterLord' }, function(token) {
+          return res.status(200).json({
+            message: 'authenticated, token attached',
+            token: token
+          });
         });
-    }
-    
-    user.authenticate(password, function(err, valid) {
-      if (err) {
-        return res.status(500).json(err);
       }
-      
-      if (!valid) {
+      else {
         return res.status(401).json({
-          message: 'Bad credentials'
-          });
+          message: 'bad credentials'
+        });
       }
-      
-      jwt.sign({_id: user._id}, config.secret, {expiresIn: config.jwtExpires, issuer: user._id}, function(token) {
-        return res.status(200).json({
-          message: 'Authenticated, token attached',
-          token: token
-          });
+    })
+    .catch(function(err) {
+      return res.status(400).json({
+        message: err
       });
     });
-  });
 });
 
 // Any route past this point requires a valid auth token
 router.use(function(req, res, next) {
   var token = req.body.token || req.query.token || req.headers['authorization'];
-  
+
   if (token) {
-    jwt.verify(token, config.secret, function(err, decoded) {      
+    jwt.verify(token, config.SECRET, function(err, decoded) {
       if (err) {
         return res.status(401).json({
-          message: 'Failed to authenticate token.'
+          message: 'failed authentication: invalid token'
         });
       }
-      
-      User.findOne({'_id' : decoded._id}, function(err, user) {
-        if (err || !user) {
-          return res.status(401).json({
-            message: 'Valid token provided but user not associated with it.'
-            });
-        }
-        else {
+      User.findOne({ 'id': decoded.sub })
+        .then(function(user) {
           req.decoded = decoded;
           next();
-        }
-      });
+        })
+        .catch(function(err) {
+          return res.status(401).json({
+            message: 'failed authentication: ' + err
+          });
+        });
     });
   }
   else {
-    return res.status(401).json({ 
-        message: 'No token provided.'
+    return res.status(401).json({
+      message: 'failed authentication: no token provided.'
     });
   }
 });

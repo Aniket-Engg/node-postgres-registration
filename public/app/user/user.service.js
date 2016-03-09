@@ -1,12 +1,12 @@
 var app = angular.module('sampleApp');
 
-app.service('User', function ($http, API_URL, $q, $localStorage) {
+app.service('User', function($http, API_URL, $q, $localStorage) {
   var self = this;
 
-  self.getUserData = function () {
+  self.getUserData = function() {
     var deferred = $q.defer();
     $http.get(API_URL + '/v1/users/me')
-      .then(function (res) {
+      .then(function(res) {
         if (res.status === 200 && res.data) {
           deferred.resolve({
             id: res.data.id,
@@ -22,79 +22,77 @@ app.service('User', function ($http, API_URL, $q, $localStorage) {
     return deferred.promise;
   };
 
-  self.login = function (email, password) {
+  self.login = function(email, password) {
     var deferred = $q.defer();
     $http.post(API_URL + '/auth/authenticate', {
       email: email,
       password: password
     })
-      .then(function (res) {
+      .then(function(res) {
         deferred.resolve();
       })
-      .catch(function (res) {
+      .catch(function(res) {
         deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
   };
 
-  self.register = function (name, email, password) {
+  self.register = function(name, email, password) {
     var deferred = $q.defer();
-    return $http.post(API_URL + '/auth/register', {
+    $http.post(API_URL + '/auth/register', {
       name: name,
       email: email,
       password: password
     })
-      .then(function (res) {
+      .then(function(res) {
         deferred.resolve();
       })
-      .catch(function (res) {
+      .catch(function(res) {
         deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
   };
 
-  self.changeName = function (id, name) {
+  self.changeName = function(id, name) {
     var deferred = $q.defer();
-    return $http.put(API_URL + '/v1/users/' + id + '/name', {
+    $http.put(API_URL + '/v1/users/' + id + '/name', {
       name: name
     })
-      .then(function (res) {
+      .then(function(res) {
         deferred.resolve();
       })
-      .catch(function (res) {
+      .catch(function(res) {
         deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 
     return deferred.promise;
   };
 
-  self.changeEmail = function (id, email) {
+  self.changeEmail = function(id, email) {
     var deferred = $q.defer();
-    return $http.put(API_URL + '/v1/users/' + id + '/email', {
+    $http.put(API_URL + '/v1/users/' + id + '/email', {
       email: email
     })
-      .then(function (res) {
+      .then(function(res) {
         deferred.resolve();
       })
-      .catch(function (res) {
+      .catch(function(res) {
         deferred.reject('Invalid new email or already in use by another user');
       });
     return deferred.promise;
   };
 
-  self.changePassword = function (id, oldPassword, newPassword) {
+  self.changePassword = function(id, password) {
     var deferred = $q.defer();
-    return $http.put(API_URL + '/v1/users/' + id + '/password', {
-      id: id,
-      oldPassword: oldPassword,
-      newPassword: newPassword
+    $http.put(API_URL + '/v1/users/' + id + '/password', {
+      password: password
     })
-      .then(function (res) {
+      .then(function(res) {
         deferred.resolve();
       })
-      .catch(function (res) {
+      .catch(function(res) {
         deferred.reject(res.data ? res.data.message : 'Something went wrong');
       });
 

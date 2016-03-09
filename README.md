@@ -1,6 +1,9 @@
 # Simple Node + Postgres login registration system
 MongoDB version here: https://github.com/anthonynsimon/node-mongodb-registration
 
+This is the Postgres version of my simple implementation of a login/registration system.
+The purpose of this repository is simply to try out Node + Postgres and to test it out Heroku's Postgres.
+
 ## TODO
 ### Features
 - [x] Register with name (optional), email and password.

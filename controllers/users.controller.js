@@ -1,259 +1,110 @@
-var User = require('mongoose').model('User');
+var Promise = require('promise');
+var config = require('./../config/config');
+var User = require('./../models/user');
 
-exports.createUser = function (req, res, next) {
-  User.create(req.body, function (err, user) {
-    if (err) {
-      return res.status(400).json({
-        message: 'Input data validation failed or user already exists.'
-      });
-    }
-
-    if (user) {
-      return res.status(200).json({
-        id: user._id,
-        name: user.name,
-        email: user.email
-      });
-    }
-    else {
-      next();
-    }
-  });
-};
-
-exports.getUser = function (req, res, next) {
-  var paramsId = req.params.id;
-  
-  if (!paramsId){
-    return res.status(400).json({
-      message: 'Incomplete input, please provide user id as param'
-    });
-  }
-  
-  User.findOne({_id: paramsId}, "-password", function (err, user) {
-    if (err) {
-      return res.status(400).json({
-        message: 'User not found'
-      });
-    }
-
-    if (user) {
-      return res.status(200).json({
-        id: user._id,
-        name: user.name,
-        email: user.email
-      });
-    }
-    else {
-      next();
-    }
-  });
-};
-
-exports.getUserSelf = function (req, res, next) {
-  var decodedId = req.decoded._id;
-  
-  User.findOne({_id: decodedId}, "-password", function (err, user) {
-    if (err) {
-      return res.status(400).json({
-        message: 'User not found'
-      });
-    }
-
-    if (user) {
-      return res.status(200).json({
-        id: user._id,
-        name: user.name,
-        email: user.email
-      });
-    }
-    else {
-      next();
-    }
-  });
-};
-
-exports.listUsers = function (req, res, next) {
-  User.find({}, "-password -loginAttempts -__v", function (err, users) {
-    if (err) {
-      return res.status(500).json({
-        message: 'Internal error, please try again.'
-      });
-    }
-
-    if (users) {
-      return res.status(200).json(users);
-    }
-    else {
-      next();
-    }
-  });
-};
-
-exports.changeName = function (req, res, next) {
-  var decodedId = req.decoded._id;
-  var paramId = req.params.id;
-  var newName = req.body.name;
-
-  if (!newName) {
-    return res.status(400).json({
-      message: 'Incomplete input. Please provide the desired name in the body.'
-    });
-  }
-
-  validateUserTokenId(decodedId, paramId, function (err) {
-    if (err) {
-      return res.status(400).json(err);
-    }
-
-    User.findOne({ _id: decodedId }, function (err, user) {
-      if (err || !user) {
-        return res.status(400).json({
-          message: 'User not found'
-        });
-      }
-
-      user.changeName(newName, function (err) {
-        if (err) {
-          return res.status(500).json({
-            message: 'Internal error, please try again.'
-          });
-        }
-
+module.exports = {
+  createUser: function(req, res) {
+    User.create(req.body)
+      .then(function(result) {
         return res.status(200).json({
-          message: 'Success, changed name associated with this user'
+          message: 'success! created account for new user',
+          id: result.id
         });
-      });
-    });
-  });
-};
-
-exports.changePassword = function (req, res, next) {
-  var decodedId = req.decoded._id;
-  var paramId = req.params.id;
-  var oldPasword = req.body.oldPassword;
-  var newPassword = req.body.newPassword;
-
-  if (!oldPasword || !newPassword) {
-    return res.status(400).json({
-      message: 'Incomplete input, please provide an old password and a new one'
-    });
-  }
-
-  validateUserTokenId(decodedId, paramId, function (err) {
-    if (err) {
-      return res.status(400).json(err);
-    }
-
-    User.findOne({ _id: decodedId }, function (err, user) {
-      if (err || !user) {
+      })
+      .catch(function(err) {
         return res.status(400).json({
-          message: 'User not found'
-        });
-      }
-
-      user.changePassword(oldPasword, newPassword, function (err) {
-        if (err) {
-          return res.status(400).json(err);
-        }
-
-        return res.status(200).json({
-          message: 'Success, changed password associated with this user'
+          message: err
         });
       });
-    });
-  });
-};
+  },
 
-// TODO allow for permission based editing (admin: can edit associated users)
-exports.changeEmail = function (req, res, next) {
-  var decodedId = req.decoded._id;
-  var paramId = req.params.id;
-  var email = req.body.email;
-  //var password = req.body.password;
-
-  if (!email) {
-    return res.status(400).json({
-      message: 'Incomplete input, please provide a new email'
-    });
-  }
-
-  // TODO, change to permission based
-  validateUserTokenId(decodedId, paramId, function (err) {
-    if (err) {
-      return res.status(400).json(err);
-    }
-
-    User.findOne({ _id: paramId }, function (err, user) {
-      if (err || !user) {
+  changeName: function(req, res) {
+    User.updateName({ id: req.params.id, name: req.body.name })
+      .then(function(result) {
+        return res.status(200).json(result);
+      })
+      .catch(function(err) {
         return res.status(400).json({
-          message: 'User not found'
-        });
-      }
-
-      user.changeEmail(email, function (err) {
-        if (err) {
-          return res.status(400).json(err);
-        }
-
-        return res.status(200).json({
-          message: 'Success, changed email associated with this user'
+          message: err
         });
       });
-    });
-  });
-};
+  },
 
-exports.deleteUser = function (req, res, next) {
-  var decodedId = req.decoded._id;
-  var paramId = req.params.id;
-  var password = req.body.password;
-
-  if (!password) {
-    return res.status(400).json({
-      message: 'Incomplete input, please provide a password to confirm delete'
-    });
-  }
-
-  validateUserTokenId(decodedId, paramId, function (err) {
-    if (err) {
-      return res.status(400).json(err);
-    }
-
-    User.findOne({ _id: decodedId }, function (err, user) {
-      if (err || !user) {
+  changeEmail: function(req, res) {
+    User.updateEmail({ id: req.params.id, email: req.body.email })
+      .then(function(result) {
+        return res.status(200).json(result);
+      })
+      .catch(function(err) {
         return res.status(400).json({
-          message: 'User not found'
-        });
-      }
-
-      user.deleteUser(password, function (err) {
-        if (err) {
-          return res.status(400).json(err);
-        }
-
-        return res.status(200).json({
-          message: 'Success, user deleted'
+          message: err
         });
       });
-    });
-  });
+  },
+
+  changePassword: function(req, res) {
+    User.updatePassword({ id: req.params.id, password: req.body.password })
+      .then(function(result) {
+        return res.status(200).json(result);
+      })
+      .catch(function(err) {
+        return res.status(400).json({
+          message: err
+        });
+      });
+  },
+
+  deleteUser: function(req, res) {
+    User.delete({ id: req.params.id })
+      .then(function(result) {
+        return res.status(200).json({
+          message: 'deleted user with id: ' + result.id
+        });
+      })
+      .catch(function(err) {
+        return res.status(400).json({
+          message: err
+        });
+      });
+  },
+
+  getOneUser: function(req, res) {
+    User.findOne({ id: req.params.id })
+      .then(function(result) {
+        delete result.last_login_attempt;
+        delete result.login_attempts;
+        return res.status(200).json(result);
+      })
+      .catch(function(err) {
+        return res.status(400).json({
+          message: err
+        });
+      });
+  },
+
+  getSelfUser: function(req, res) {
+    User.findOne({ id: req.decoded.sub })
+      .then(function(result) {
+        delete result.last_login_attempt;
+        delete result.login_attempts;
+        return res.status(200).json(result);
+      })
+      .catch(function(err) {
+        return res.status(400).json({
+          message: err
+        });
+      });
+  },
+
+  listUsers: function(req, res) {
+    User.findAll()
+      .then(function(result) {
+        return res.status(200).json(result);
+      })
+      .catch(function(err) {
+        return res.status(400).json({
+          message: err
+        });
+      });
+  },
 };
-
-// TODO: Add admin permissions check here
-function validateUserTokenId(decodedId, paramId, next) {
-  if (!decodedId || !paramId) {
-    return next({
-      message: 'Missing credentials for provided user URI'
-    });
-  }
-
-  if (decodedId.toString() !== paramId.toString()) {
-    return next({
-      message: 'Invalid credentials for provided user URI'
-    });
-  }
-  else {
-    next();
-  }
-}
