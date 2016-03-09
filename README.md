@@ -1,4 +1,4 @@
-# Simple Node + MongoDB login registration system
+# Simple Node + Postgres login registration system
 MongoDB version here: https://github.com/anthonynsimon/node-mongodb-registration
 
 ## TODO
