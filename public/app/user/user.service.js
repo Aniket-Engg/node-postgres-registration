@@ -1,11 +1,11 @@
 var app = angular.module('sampleApp');
 
-app.service('User', function($http, API_URL, $q, $localStorage) {
+app.service('User', function($http, $q, $localStorage) {
   var self = this;
 
   self.getUserData = function() {
     var deferred = $q.defer();
-    $http.get(API_URL + '/v1/users/me')
+    $http.get('/api/v1/users/me')
       .then(function(res) {
         if (res.status === 200 && res.data) {
           deferred.resolve({
@@ -24,7 +24,7 @@ app.service('User', function($http, API_URL, $q, $localStorage) {
 
   self.login = function(email, password) {
     var deferred = $q.defer();
-    $http.post(API_URL + '/auth/authenticate', {
+    $http.post('/api/auth/authenticate', {
       email: email,
       password: password
     })
@@ -40,7 +40,7 @@ app.service('User', function($http, API_URL, $q, $localStorage) {
 
   self.register = function(name, email, password) {
     var deferred = $q.defer();
-    $http.post(API_URL + '/auth/register', {
+    $http.post('/api/auth/register', {
       name: name,
       email: email,
       password: password
@@ -57,7 +57,7 @@ app.service('User', function($http, API_URL, $q, $localStorage) {
 
   self.changeName = function(id, name) {
     var deferred = $q.defer();
-    $http.put(API_URL + '/v1/users/' + id + '/name', {
+    $http.put('/api/v1/users/' + id + '/name', {
       name: name
     })
       .then(function(res) {
@@ -72,7 +72,7 @@ app.service('User', function($http, API_URL, $q, $localStorage) {
 
   self.changeEmail = function(id, email) {
     var deferred = $q.defer();
-    $http.put(API_URL + '/v1/users/' + id + '/email', {
+    $http.put('/api/v1/users/' + id + '/email', {
       email: email
     })
       .then(function(res) {
@@ -86,7 +86,7 @@ app.service('User', function($http, API_URL, $q, $localStorage) {
 
   self.changePassword = function(id, password) {
     var deferred = $q.defer();
-    $http.put(API_URL + '/v1/users/' + id + '/password', {
+    $http.put('/api/v1/users/' + id + '/password', {
       password: password
     })
       .then(function(res) {
