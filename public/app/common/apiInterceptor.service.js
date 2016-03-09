@@ -1,8 +1,8 @@
 var app = angular.module('sampleApp');
 
-app.service('ApiInterceptor', function (Auth, API_URL) {
+app.service('ApiInterceptor', function (Auth) {
   this.request = function (config) {
-    if (config.url.indexOf(API_URL) >= 0) {
+    if (config.url.indexOf('/api') >= 0) {
       var token = Auth.getToken();
       if (token) {
         config.headers.authorization = token;
@@ -13,7 +13,7 @@ app.service('ApiInterceptor', function (Auth, API_URL) {
   };
 
   this.response = function (res) {
-    if (res.config.url.indexOf(API_URL + '/auth/authenticate') >= 0) {
+    if (res.config.url.indexOf('/api/auth/authenticate') >= 0) {
       var token = res.data.token;
       if (token) {
         Auth.saveToken(token);
