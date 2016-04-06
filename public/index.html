@@ -9,12 +9,13 @@
   <title>Node Login/Registration</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"></link>
+  <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/customStyles.css"></link>
 
   <!-- JS -->
   <script src="vendor/jquery/dist/jquery.min.js"></script>
-  <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js" integrity="sha384-XXXXXXXX" crossorigin="anonymous"></script>
   <script src="vendor/angular/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.min.js"></script>
   <script src="vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -32,11 +33,18 @@
 <body ng-app="sampleApp">
 
   <div class="container">
-    
-    <h3 class="text-center">Node login/registration</h3>
+
     <!-- Angular view -->
     <div ui-view></div>
     
+  </div>
+
+  <div class="container m-t-2">
+    <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+        <p class="text-xs-center"><a class="text-muted" href="https://github.com/anthonynsimon/node-postgres-registration"><i class="fa fa-github"></i> View on Github</a></p>
+      </div>
+    </div>
   </div>
 
 </body>

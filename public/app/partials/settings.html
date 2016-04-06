@@ -1,35 +1,31 @@
 <div class="container">
-  <div class="centered-tight">
-    <h4>Account Settings</h4>
-    <form>
+  <div class="centered-md bg-rounded-box soft-shadow">
+    <h4 class="text-xs-center">Account Settings</h4>
+    <form class="m-t-1">
 
-      <div class="alert alert-success" role="alert" ng-show="alert.success">{{alert.success}}</div>
-      <div class="alert alert-danger" role="alert" ng-show="alert.error">{{alert.error}}</div>
+     <div class="alert alert-success" role="alert" ng-show="alert.success">{{alert.success}}</div>
+     <div class="alert alert-danger" role="alert" ng-show="alert.error">{{alert.error}}</div>
 
-      <br>
-      <label>User name:</label>
-      <br>
-      <input type="text" placeholder="Your name" ng-model="name">
-      <br>
-      <button ng-click="changeName()">Change name</button>
-      <br>
-      <br>
-      <label>User email:</label>
-      <br>
-      <input type="email" placeholder="Your email" ng-model="email">
-      <br>
-      <button ng-click="changeEmail()">Change email</button>
-      <br>
-      <br>
-      <label>Change password:</label>
-      <br>
-      <input type="password" placeholder="New password" ng-model="password">
-      <br>
-      <button ng-click="changePassword()">Change password</button>
-      <br>
-      <br>
-      <button ui-sref="profile">Back to profile</button>
+     <div class="list-group">
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">Name:</h5>
+        <input class="form-control m-b-1" type="text" placeholder="Your name" ng-model="name">
+        <button class="btn btn-success form-control" ng-click="changeName()">Change name</button>
+      </div> 
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">Email:</h5>
+        <input class="form-control m-b-1" type="email" placeholder="Your email" ng-model="email">
+        <button class="btn btn-success form-control" ng-click="changeEmail()">Change email</button>
+      </div>
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">Password:</h5>
+        <input class="form-control m-b-1" type="password" placeholder="New password" ng-model="password">
+        <button class="btn btn-success form-control" ng-click="changePassword()">Change password</button>
+      </div>
+    </div>
 
-    </form>
-  </div>
+    <button class="btn btn-secondary m-t-2" ui-sref="profile">Back to profile</button>
+
+  </form>
+</div>
 </div>

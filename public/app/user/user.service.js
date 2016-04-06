@@ -32,7 +32,7 @@ app.service('User', function($http, $q, $localStorage) {
         deferred.resolve();
       })
       .catch(function(res) {
-        deferred.reject(res.data ? res.data.message : 'Something went wrong');
+        deferred.reject(res.data ? res.data.message : 'Something went wrong, please try again');
       });
 
     return deferred.promise;
@@ -49,7 +49,7 @@ app.service('User', function($http, $q, $localStorage) {
         deferred.resolve();
       })
       .catch(function(res) {
-        deferred.reject(res.data ? res.data.message : 'Something went wrong');
+        deferred.reject(res.data ? res.data.message : 'Something went wrong, please try again');
       });
 
     return deferred.promise;
@@ -64,7 +64,7 @@ app.service('User', function($http, $q, $localStorage) {
         deferred.resolve();
       })
       .catch(function(res) {
-        deferred.reject(res.data ? res.data.message : 'Something went wrong');
+        deferred.reject(res.data ? res.data.message : 'Something went wrong, please try again');
       });
 
     return deferred.promise;
@@ -93,7 +93,7 @@ app.service('User', function($http, $q, $localStorage) {
         deferred.resolve();
       })
       .catch(function(res) {
-        deferred.reject(res.data ? res.data.message : 'Something went wrong');
+        deferred.reject(res.data ? res.data.message : 'Something went wrong, please try again');
       });
 
     return deferred.promise;
